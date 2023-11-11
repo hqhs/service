@@ -42,3 +42,6 @@ getrandom = { version = "0.2.10", features = ["js"]}
 lto = true
 strip = true
 codegen-units = 1
+
+[dev-dependencies]
+axum-test = "13.1.1"

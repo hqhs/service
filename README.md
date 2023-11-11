@@ -4,6 +4,8 @@ I prototype often, I wanted ready-to-go github repo to start new projects faster
 
 I know that Rust could not seem like a good language to do this, but best thing to choose for quick development is something you already know, and I've been doing Rust for multiple years now both professionally and personally. 
 
+Another argument for Rust is that you'll gain time lost fighting the compiler in time you would spend debugging, deploying and testing otherwise.
+
 ## stack
 
 Rust:

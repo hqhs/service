@@ -1,4 +1,5 @@
 use std::env;
+use std::path::Path;
 use std::sync::Arc;
 
 use axum::routing::{Router, get};
@@ -6,12 +7,16 @@ use sqlx::sqlite::SqlitePoolOptions;
 use axum::response::{IntoResponse, Response};
 use axum::extract::State;
 use hyper::StatusCode;
+use tera::Tera;
 use dotenvy::dotenv;
 use sqlx::{Pool, Sqlite};
 use anyhow;
 
-struct ServerState {
-    db: Pool<Sqlite>
+const TEMPLATES_DIR: &str = "templates";
+
+pub struct ServerState {
+    db: Pool<Sqlite>,
+    templates: Tera,
 }
 
 type StateTy = State<Arc<ServerState>>;
@@ -30,6 +35,24 @@ struct Card {
 }
 
 pub async fn run_server() -> anyhow::Result<()> {
+
+    let state = setup_server_state().await?;
+
+    let card = Card{id: 0, title: "Hello".into(), text: "where".into()};
+    sqlx::query("insert into cards (title, text) values ($1, $2)")
+        .bind(&card.title)
+        .bind(&card.text)
+        .execute(&state.db).await?;
+
+    let app = setup_router(state.into());
+
+    axum::Server::bind(&"0.0.0.0:3000".parse()?)
+        .serve(app.into_make_service())
+        .await?;
+    Ok(())
+}
+
+pub async fn setup_server_state() -> anyhow::Result<ServerState> {
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = SqlitePoolOptions::new()
@@ -38,25 +61,24 @@ pub async fn run_server() -> anyhow::Result<()> {
 
     sqlx::migrate!().run(&pool).await?;
 
-    let card = Card{id: 0, title: "Hello".into(), text: "where".into()};
-    sqlx::query("insert into cards (title, text) values ($1, $2)")
-        .bind(&card.title)
-        .bind(&card.text)
-        .execute(&pool).await?;
+    let templates = {
+        if !Path::new(TEMPLATES_DIR).is_dir() {
+            anyhow::bail!("{} directory does not exist", TEMPLATES_DIR);
+        }
+        let glob = format!("{}/**/*.jinja2", TEMPLATES_DIR);
+        let mut templates = Tera::new(&glob)?;
+        templates.autoescape_on(vec![".jinja2"]);
+        templates
+    };
 
-    println!("{}; {}", card.title, card.text);
+    Ok(ServerState{db: pool, templates})
+}
 
-    let state = Arc::new(ServerState{db: pool});
-
-    let app = Router::new()
+pub fn setup_router(state: Arc<ServerState>) -> Router {
+    Router::new()
         .route("/cards", get(list_cards))
         .fallback(handler_404)
-        .with_state(state);
-
-    axum::Server::bind(&"0.0.0.0:3000".parse()?)
-        .serve(app.into_make_service())
-        .await?;
-    Ok(())
+        .with_state(state)
 }
 
 async fn list_cards(State(state): StateTy) -> Result<(), AppError> {
