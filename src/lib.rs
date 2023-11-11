@@ -29,8 +29,7 @@ struct Card {
     text: String,
 }
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
+pub async fn run_server() -> anyhow::Result<()> {
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = SqlitePoolOptions::new()
