@@ -6,11 +6,21 @@ I know that Rust could not seem like a good language to do this, but best thing 
 
 Another argument for Rust is that you'll gain time lost fighting the compiler in time you would spend debugging, deploying and testing otherwise.
 
+## general advices
+
+For trully "quick" prototyping, employ as much compile-time checks as possible (less unit tests, easier refactorings), but be lax on warnings (e.g. clippy improves code quality, but high quality is not a requirement for prototypes). e.g.
+
+- employ sqlx compile time query checks 
+- use openapi client generation
+
+## requirements
+
+
 ## stack
 
 Rust:
 - axum
-- sqlx 
+- sqlx (cargo install sqlx-cli --features native-tls,sqlite)
 - tera (template engine)
 
 Storage:
@@ -20,6 +30,10 @@ Frontend:
 - htmx 
 - alpine.js
 - tailwind
+
+## Example projects
+
+- [oauth2](https://github.com/hqhs/oauth2) implementation
 
 ## Targets 
 
