@@ -1,3 +1,8 @@
+mod post;
+mod schema;
+
+pub use post::Post;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
