@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" href="/static/favicon.png" />
+        <meta name="viewport" content="width=device-width" />
+
+        <!-- Font Awesome -->
+        <link href="/static/font-awesome/fontawesome.min.css" rel="stylesheet" />
+        <link href="/static/font-awesome/brands.min.css" rel="stylesheet" />
+        <link href="/static/font-awesome/solid.min.css" rel="stylesheet" />
+
+        {% if dev_mode %}
+            {# to prevent css mode caching in dev mode #}
+            <link href="/static/styles.css?{{ request_id }}" rel="stylesheet" />
+        {% else %}
+            <link href="/static/styles.css" rel="stylesheet" />
+        {% endif %}
+        <script src="/static/htmx.min.js"></script>
+    </head>
+    <body>
+        <div class="min-h-screen">
+            {% block header %}{% endblock header %}
+            <div class="h-full mx-auto max-w-7xl sm:px-6 lg:px-8">
+                {% block content %}
+                    <div class="container h-screen mx-auto flex justify-center items-center">
+                        <div class="space-y-10 text-center flex flex-col items-center">
+                            <h2 class="h2 font-bold">Hi there!<br> Nothing to see here (yet)</h2>
+                            <div class="flex justify-center space-x-2">
+                                <a class="variant-filled" href="/home">
+                                    Open site
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock content %}
+            </div>
+        </div>
+        {% block footer %}{% endblock footer %}
+    </body>
+</html>

@@ -13,5 +13,8 @@ strip = true
 codegen-units = 1
 
 [workspace.dependencies]
+pico-args = "0.5.0"
+anyhow = "1.0.75"
+diesel = { version = "2.1.6", default-features = false, features = ["sqlite", "r2d2"] }
 tokio = { version = "1.28", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
