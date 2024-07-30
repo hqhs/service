@@ -20,8 +20,8 @@ tokio-util = "0.7.8" # for cancellation tokens and graceful shutdown
 # internet is byte streams
 hyper = { version = "1.0.0-rc.3", features = ["full"] }
 # some bytes are hypertext
-axum = { version = "0.6.20", features = ["headers", "form", "ws"] }
-axum-extra = { version = "0.7.4", features = ["cookie", "form"] }
+axum = { version = "0.7.5", features = ["form", "ws"] }
+axum-extra = { version = "0.9", features = ["cookie", "form"] }
 
 # for static files serving
 tower = { version = "0.4", features = ["util"] }

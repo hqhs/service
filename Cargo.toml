@@ -4,6 +4,7 @@ members = [
     "crates/api",
     "crates/models",
     "crates/service",
+    "crates/xtask",
 ]
 
 [profile.release]
