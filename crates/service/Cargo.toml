@@ -18,14 +18,14 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tokio.workspace = true
 tokio-util = "0.7.8" # for cancellation tokens and graceful shutdown
 # internet is byte streams
-hyper = { version = "1.0.0-rc.3", features = ["full"] }
+hyper = { version = "1.1.0", features = ["full"] }
 # some bytes are hypertext
 axum = { version = "0.7.5", features = ["form", "ws"] }
 axum-extra = { version = "0.9", features = ["cookie", "form"] }
 
 # for static files serving
-tower = { version = "0.4", features = ["util"] }
-tower-http = { version = "0.4.0", features = ["fs", "trace"] }
+tower = { version = "0.4.13", features = ["util"] }
+tower-http = { version = "0.5.0", features = ["fs", "trace"] }
 
 # templating
 serde.workspace = true
@@ -35,10 +35,14 @@ tera = "1.19.1"
 anyhow = "1.0.75"
 dotenvy = "0.15.7"
 
-sqlx = { version = "0.7", features = [ "runtime-tokio", "tls-rustls", "sqlite", "migrate" ] }
+diesel = "2.2.2"
+diesel-async = "0.5.0"
 
 getrandom = { version = "0.2.10", features = ["js"]}
-
+pico-args = "0.5.0"
 
 [dev-dependencies]
 axum-test = "13.1.1"
+
+[features]
+reload = []
