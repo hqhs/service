@@ -50,7 +50,7 @@ async fn main() -> anyhow::Result<()> {
 async fn run_dev_server() -> anyhow::Result<()> {
     // Spawn the process
     let mut service_handle = Command::new("cargo")
-        .args(["run", "--bin", "service"])
+        .args(["run", "-F", "reload", "--bin", "service"])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;

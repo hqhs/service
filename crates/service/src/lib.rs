@@ -8,7 +8,7 @@ use std::{
 use axum::{
     extract::Request,
     response::{Html, IntoResponse, Response},
-    routing::get,
+    routing::{get, post},
     Extension, Router,
 };
 use diesel::{
@@ -163,15 +163,33 @@ fn build_root_router<P: AsRef<Path>>(
 ) -> Router {
     let serve_dir = ServeDir::new(path);
 
-    let root_router =
-        Router::new().route("/", get(root)).nest_service("/static", serve_dir);
+    let root_router = apply_middleware(
+        Router::new().route("/", get(root)).nest_service("/static", serve_dir),
+        server.clone(),
+    );
 
-    apply_middleware(root_router, server)
+    let debug_routes = apply_middleware(
+        Router::new().route("/reload", post(reload_templates)),
+        server,
+    );
+
+    Router::new().merge(root_router).merge(debug_routes)
 }
 
 async fn root(Extension(cx): Extension<Cx>) -> Template {
     let template = cx.render("home.jinja2", serde_json::Value::Null)?;
     Ok(Html(template))
+}
+
+async fn reload_templates(
+    Extension(cx): Extension<Cx>,
+) -> Result<StatusCode, AppError> {
+    #[cfg(feature = "reload")]
+    {
+        tracing::info!("reloading templates...");
+        cx.server.reload_templates()?;
+    }
+    Ok(StatusCode::OK)
 }
 
 async fn handle_404() -> (StatusCode, &'static str) {
